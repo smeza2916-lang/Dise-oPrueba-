@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="titulo">Negocio</title>
+<style>
+*{margin:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#111;color:#fff}
+.hero{height:82vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),var(--foto);background-size:cover;background-position:center}
+.hero h1{font-size:44px;letter-spacing:2px;line-height:1}
+.hero p{color:#ddd;margin:12px 0 20px}
+.btn{background:var(--color);color:#000;padding:15px 30px;border-radius:100px;font-weight:900;text-decoration:none;display:inline-block}
+.section{padding:28px 18px;max-width:900px;margin:auto}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.card{background:#1c1c1c;padding:16px;border-radius:16px;border:1px solid #333}
+.card b{font-size:14px}
+.card p{font-size:12px;color:#aaa;margin-top:4px}
+.price{color:var(--color);font-weight:900;margin-top:8px}
+.info{background:#1c1c1c;padding:16px;border-radius:16px;margin-top:12px;font-size:13px;color:#bbb;line-height:1.6}
+.wa{position:fixed;bottom:20px;right:20px;background:#25D366;color:#fff;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;text-decoration:none;z-index:99}
+.estrellas{color:#FFC107;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="hero" id="hero">
+  <div id="emoji" style="font-size:60px">🍔</div>
+  <h1 id="nombreNegocio">NOMBRE</h1>
+  <p id="eslogan">Eslogan</p>
+  <div class="estrellas">⭐⭐⭐⭐⭐ 4.9 • Huatabampo</div>
+  <br>
+  <a class="btn" id="btnHero" href="#">AGENDAR POR WHATSAPP</a>
+</div>
+
+<div class="section">
+  <h2 id="tituloServicios">Servicios / Menú</h2>
+  <div class="cards" id="listaServicios"></div>
+  <div class="info" id="infoNegocio"></div>
+  <a class="btn" id="btn2" href="#" style="display:block;text-align:center;margin-top:16px">PEDIR POR WHATSAPP</a>
+</div>
+
+<a class="wa" id="btnWa" href="#">💬</a>
+
+<script>
+// ===== SOLO CAMBIA ESTO PARA CADA CLIENTE =====
+const NEGOCIO = {
+  nombre: "Taquería El Güero",
+  emoji: "🌮",
+  eslogan: "Los mejores tacos de Huatabampo • Desde 2010",
+  color: "#FFB800", // Amarillo tacos, #FF3A00 naranja, #FF6BB3 rosa uñas, #00CFFF azul barber
+  foto: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=900",
+  whatsapp: "526471217378", // Número del cliente con 52
+  mensaje: "Hola, quiero pedir en Taquería El Güero",
+  servicios: [
+    { nombre: "Tacos carne asada (3)", desc: "Con salsa y limón", precio: "$75" },
+    { nombre: "Burrito machaca", desc: "Grande, con queso", precio: "$65" },
+    { nombre: "Quesadilla", desc: "Con carne", precio: "$55" },
+    { nombre: "Coca 600ml", desc: "Bien fría", precio: "$25" },
+  ],
+  info: "📍 Zaragoza #123, Centro, Huatabampo<br>🕐 Lun - Dom 5pm - 11pm<br>📞 647 121 7378<br>✅ Servicio a domicilio"
+};
+// ==============================================
+
+document.documentElement.style.setProperty('--color', NEGOCIO.color);
+document.documentElement.style.setProperty('--foto', `url('${NEGOCIO.foto}')`);
+document.getElementById('nombreNegocio').innerText = NEGOCIO.nombre;
+document.getElementById('emoji').innerText = NEGOCIO.emoji;
+document.getElementById('eslogan').innerText = NEGOCIO.eslogan;
+document.getElementById('titulo').innerText = NEGOCIO.nombre + " | Huatabampo";
+document.getElementById('infoNegocio').innerHTML = NEGOCIO.info;
+let link = `https://wa.me/${NEGOCIO.whatsapp}?text=${encodeURIComponent(NEGOCIO.mensaje)}`;
+document.getElementById('btnHero').href = link;
+document.getElementById('btn2').href = link;
+document.getElementById('btnWa').href = link;
+let html = "";
+NEGOCIO.servicios.forEach(s=>{
+  html += `<div class="card"><b>${s.nombre}</b><p>${s.desc}</p><div class="price">${s.precio}</div></div>`;
+});
+document.getElementById('listaServicios').innerHTML = html;
+</script>
+</body>
+</html>
