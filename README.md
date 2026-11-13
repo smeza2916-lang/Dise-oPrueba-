@@ -1,2 +1,2 @@
-# Dise-oPrueba-
+# DiseñoPrueba-
 Para negocios
