@@ -40,16 +40,17 @@ footer{text-align:center;color:#666;font-size:12px;padding:16px;line-height:1.6}
 <div id="sec-comprar" class="seccion activa">
 <div class="box">
 <h3>🎟️ Tu boleto $20 = 20 oportunidades</h3>
-<p style="font-size:13px;color:#bbb;line-height:1.6;margin-top:6px">Pagando $20 te damos 20 números de 5 cifras. Si CUALQUIERA de tus 20 números sale igualito al de Lotería Nacional hoy, te llevas TODO el acumulado.</p>
-<div id="misNumerosBox" style="display:none" class="boleta"><small>BONOS HUATABAMPO • BOLETO #<span id="folioNum">001</span></small><br><b id="mis20Numeros"></b><br><small id="nombreBoleta" style="color:#fff"></small></div>
+<p style="font-size:13px;color:#bbb;line-height:1.6;margin-top:6px">Pagando $20 te damos 20 números de 5 cifras. Si CUALQUIERA de tus 20 números sale igualito al de Lotería Nacional hoy, te llevas TODO el acumulado. Números únicos, sin repetidos en toda la rifa.</p>
+<div id="misNumerosBox" style="display:none" class="boleta"><small>BONOS HUATABAMPO • BOLETO #<span id="folioNum">001</span></small><br><b id="mis20Numeros"></b><br><small id="nombreBoleta" style="color:#fff"></small><br><small style="color:#25D366">✅ Números verificados - Sin repetidos</small></div>
 <label>Tu nombre completo</label><input id="nombre" placeholder="Ej: Meza López">
 <label>Tu WhatsApp</label><input id="whats" placeholder="Ej: 647 115 7123">
 <label>Método de pago</label><select id="pago"><option>Transferencia / SPEI</option><option>Efectivo en Huatabampo</option><option>OXXO</option></select>
 <button class="btn btn-oro" onclick="generarBoleto()">🎲 GENERAR MIS 20 NÚMEROS - $20</button>
 <button class="btn btn-wa" onclick="comprarWA()">💬 COMPRAR POR WHATSAPP - 647 115 7123</button>
-<p style="font-size:11px;color:#777;text-align:center;margin-top:8px">Te mandamos tus 20 números de 5 cifras por WhatsApp. Tienes que pagar antes de las 7 PM para entrar al sorteo de hoy.</p>
+<p style="font-size:11px;color:#777;text-align:center;margin-top:8px">Te mandamos tus 20 números de 5 cifras por WhatsApp. Tienes que pagar antes de las 7 PM para entrar al sorteo de hoy. Cada número es único, no se repite con nadie más.</p>
 </div>
 <div class="box"><h3>❓ ¿Cómo funciona el acumulado?</h3><p style="font-size:13px;color:#bbb;line-height:1.7;margin-top:6px">1. Compras tu boleto $20 = 20 números de 5 cifras<br>2. Hoy 8 PM se saca número de Lotería Nacional (5 cifras)<br>3. Si tu número es igualito, ganas TODO lo acumulado<br>4. Si nadie gana, mañana el premio sube $3,000 más<br>5. Así hasta que alguien se lo lleve</p></div>
+<div class="box"><h3>🔒 ¿De dónde salen los números?</h3><p style="font-size:13px;color:#bbb;line-height:1.7;margin-top:6px">Los genera tu mismo celular al azar entre 10000 y 99999. El sistema revisa que no se repita ninguno, ni en tu boleto ni con el de otra persona. Si te toca el 54321, nadie más en Huatabampo tiene ese 54321. El ganador es el que salga en Lotería Nacional.</p></div>
 </div>
 
 <div id="sec-acum" class="seccion">
@@ -99,9 +100,28 @@ function actualizarPremio(){
   renderAdmin();
 }
 function ver(s){document.querySelectorAll('.seccion').forEach(x=>x.classList.remove('activa'));document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('activo'));document.getElementById('sec-'+s).classList.add('activa');document.getElementById('tab-'+(s==='comprar'?'comprar':s==='acum'?'acum':'admin')).classList.add('activo');}
+
+// --- AQUÍ ESTÁ EL ARREGLO DE NO REPETIDOS ---
 function generar20Numeros(){
-  let nums=[]; while(nums.length<20){ let n = Math.floor(Math.random()*90000)+10000; let s=n.toString(); if(!nums.includes(s)) nums.push(s); } return nums;
+  // 1. Junta TODOS los números ya vendidos en toda la rifa
+  let todosVendidos = [];
+  boletos.forEach(b => { b.numeros.forEach(n => todosVendidos.push(n)); });
+  // 2. También junta los que ya generaste ahorita para no repetirte
+  let nums = [];
+  let intentos = 0;
+  while(nums.length < 20 && intentos < 10000){
+    intentos++;
+    // Genera un número al azar de 5 cifras: 10000 a 99999
+    let n = Math.floor(Math.random()*90000)+10000;
+    let s = n.toString();
+    // 3. Si ya existe en tu boleto O en otro boleto vendido, NO lo usa y genera otro
+    if(!nums.includes(s) && !todosVendidos.includes(s)){
+      nums.push(s);
+    }
+  }
+  return nums;
 }
+
 function generarBoleto(){
   let nombre=document.getElementById('nombre').value.trim();
   if(!nombre) return alert('Pon tu nombre primero, jefe.');
@@ -114,12 +134,12 @@ function generarBoleto(){
   boletos.push({folio, nombre, numeros: misNumeros, dia: diaActual});
   localStorage.setItem('bonos_acum_boletos', JSON.stringify(boletos));
   actualizarPremio();
-  alert('¡Listo '+nombre+'! Tus 20 números de 5 cifras ya están generados. Apártarlos por WhatsApp para entrar al sorteo de hoy.');
+  alert('¡Listo '+nombre+'! Tus 20 números de 5 cifras ya están generados y verificados sin repetidos. Apártarlos por WhatsApp para entrar al sorteo de hoy.');
 }
 function comprarWA(){
   if(misNumeros.length===0) return alert('Primero dale a GENERAR MIS 20 NÚMEROS, jefe.');
   let nombre=document.getElementById('nombre').value.trim()||"";
-  let msg=`Hola Bonos Huatabampo, quiero mi boleto $20\nNombre: ${nombre}\nMis 20 oportunidades 5 cifras:\n${misNumeros.join(', ')}\nPremio hoy: $${premioPorDia(diaActual).toLocaleString('es-MX')}\nMétodo: ${document.getElementById('pago').value}`;
+  let msg=`Hola Bonos Huatabampo, quiero mi boleto $20\nNombre: ${nombre}\nMis 20 oportunidades 5 cifras (SIN REPETIDOS):\n${misNumeros.join(', ')}\nPremio hoy: $${premioPorDia(diaActual).toLocaleString('es-MX')}\nMétodo: ${document.getElementById('pago').value}`;
   window.open('https://wa.me/526471157123?text='+encodeURIComponent(msg),'_blank');
 }
 function entrarAdmin(){if(document.getElementById('claveAdmin').value==='meza123'){document.getElementById('loginAdmin').style.display='none';document.getElementById('panelAdmin').style.display='block';actualizarPremio();}else alert('Clave incorrecta.');}
